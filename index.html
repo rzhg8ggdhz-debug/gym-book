@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0f0c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Gym Book</title>
+<style>
+body {
+  margin: 0;
+  padding: 20px;
+  background: #0b0f0c;
+  color: white;
+  font-family: -apple-system, sans-serif;
+}
+h1 { color: #b7ff55; }
+.card {
+  background: #19211b;
+  padding: 18px;
+  border-radius: 18px;
+  margin: 15px 0;
+}
+button {
+  background: #b7ff55;
+  color: #101810;
+  border: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-weight: bold;
+  margin: 5px 0;
+}
+input {
+  width: 90%;
+  padding: 12px;
+  margin: 5px 0;
+  border-radius: 10px;
+  border: 1px solid #526052;
+  background: #101810;
+  color: white;
+  font-size: 16px;
+}
+</style>
+</head>
+<body>
+<h1>GYM BOOK 💪</h1>
+<p>Dein persönliches Trainingstagebuch</p>
+
+<button onclick="addExercise()">+ Übung hinzufügen</button>
+<div id="exercises"></div>
+<button onclick="saveWorkout()">Training speichern</button>
+
+<h2>Trainingsverlauf</h2>
+<div id="history"></div>
+
+<script>
+let workouts = JSON.parse(
+  localStorage.getItem("gymbook") || "[]"
+);
+
+function addExercise() {
+  let name = prompt("Name der Übung:");
+  if (!name) return;
+
+  let box = document.createElement("div");
+  box.className = "card";
+  box.dataset.name = name;
+
+  let title = document.createElement("h3");
+  title.textContent = name;
+  box.appendChild(title);
+
+  for (let i = 1; i <= 3; i++) {
+    let label = document.createElement("p");
+    label.textContent = "Satz " + i;
+    box.appendChild(label);
+
+    let weight = document.createElement("input");
+    weight.type = "number";
+    weight.placeholder = "Gewicht (kg)";
+    weight.className = "weight";
+    box.appendChild(weight);
+
+    let reps = document.createElement("input");
+    reps.type = "number";
+    reps.placeholder = "Wiederholungen";
+    reps.className = "reps";
+    box.appendChild(reps);
+  }
+
+  document.getElementById("exercises")
+    .appendChild(box);
+}
+
+function saveWorkout() {
+  let exercises = [];
+
+  document.querySelectorAll(
+    "#exercises .card"
+  ).forEach(box => {
+    let weights = box.querySelectorAll(".weight");
+    let reps = box.querySelectorAll(".reps");
+    let sets = [];
+
+    for (let i = 0; i < 3; i++) {
+      sets.push({
+        weight: weights[i].value,
+        reps: reps[i].value
+      });
+    }
+
+    exercises.push({
+      name: box.dataset.name,
+      sets: sets
+    });
+  });
+
+  if (!exercises.length) {
+    alert("Bitte zuerst eine Übung hinzufügen.");
+    return;
+  }
+
+  workouts.push({
+    date: new Date().toLocaleDateString("de-DE"),
+    exercises: exercises
+  });
+
+  localStorage.setItem(
+    "gymbook",
+    JSON.stringify(workouts)
+  );
+
+  document.getElementById("exercises").innerHTML = "";
+  showHistory();
+  alert("Training gespeichert!");
+}
+
+function showHistory() {
+  let history = document.getElementById("history");
+  history.innerHTML = "";
+
+  workouts.slice().reverse().forEach(workout => {
+    let box = document.createElement("div");
+    box.className = "card";
+
+    let date = document.createElement("h3");
+    date.textContent = workout.date;
+    box.appendChild(date);
+
+    workout.exercises.forEach(exercise => {
+      let title = document.createElement("p");
+      title.textContent = exercise.name;
+      box.appendChild(title);
+
+      exercise.sets.forEach((set, index) => {
+        let line = document.createElement("p");
+        line.textContent =
+          "Satz " + (index + 1) + ": " +
+          set.weight + " kg × " + set.reps;
+        box.appendChild(line);
+      });
+    });
+
+    history.appendChild(box);
+  });
+}
+
+showHistory();
+</script>
+</body>
+</html>
