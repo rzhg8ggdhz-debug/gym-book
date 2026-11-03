@@ -1,180 +1,33 @@
-
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b0f0c">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>Gym Book</title>
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b100d"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Gym Book"><title>Gym Book 3.0</title>
 <style>
-body {
-  margin: 0;
-  padding: 20px;
-  background: #0b0f0c;
-  color: white;
-  font-family: -apple-system, sans-serif;
-}
-h1 { color: #b7ff55; }
-.card {
-  background: #19211b;
-  padding: 18px;
-  border-radius: 18px;
-  margin: 15px 0;
-}
-button {
-  background: #b7ff55;
-  color: #101810;
-  border: none;
-  border-radius: 12px;
-  padding: 13px;
-  font-weight: bold;
-  margin: 5px 0;
-}
-input {
-  width: 90%;
-  padding: 12px;
-  margin: 5px 0;
-  border-radius: 10px;
-  border: 1px solid #526052;
-  background: #101810;
-  color: white;
-  font-size: 16px;
-}
-</style>
-</head>
-<body>
-<h1>GYM BOOK 💪</h1>
-<p>Dein persönliches Trainingstagebuch</p>
-
-<button onclick="addExercise()">+ Übung hinzufügen</button>
-<div id="exercises"></div>
-<button onclick="saveWorkout()">Training speichern</button>
-
-<h2>Trainingsverlauf</h2>
-<div id="history"></div>
-
+*{box-sizing:border-box}body{margin:0;background:#0b100d;color:#f5f9f4;font:16px -apple-system,BlinkMacSystemFont,Arial,sans-serif}main{max-width:650px;margin:auto;padding:22px 16px 110px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.logo{font-size:27px;font-weight:900}.lime{color:#baff62}.muted{color:#a0b3a3;font-size:13px;line-height:1.5}h1{font-size:29px;margin:7px 0}h2{font-size:21px;margin:23px 0 12px}h3{font-size:18px;margin:0}.card{background:#172019;border:1px solid #304034;border-radius:20px;padding:18px;margin:13px 0}.hero{background:linear-gradient(125deg,#304c29,#172019);padding:24px}.row{display:flex;justify-content:space-between;align-items:center;gap:9px}button{border:0;border-radius:12px;background:#baff62;color:#11200e;padding:12px 13px;font-size:14px;font-weight:800}button:disabled{opacity:.4}.secondary{background:#2e3d31;color:#f1f9f1}.danger{background:#4a2b2e;color:#ffced0}.wide{width:100%}input,select{width:100%;padding:12px;background:#0d1510;color:white;border:1px solid #435747;border-radius:11px;font-size:16px}label{display:block;color:#a7b9a9;font-size:12px;margin-bottom:6px}.set{display:grid;grid-template-columns:28px 1fr 1fr;gap:8px;align-items:end;margin:12px 0}.num{color:#baff62;font-weight:900;padding-bottom:13px}.previous{color:#bfd0c0;font-size:12px;line-height:1.7;margin:12px 0}.actions{display:flex;gap:8px;margin-top:14px}.actions button{flex:1}.pill{background:#2c4628;color:#caff9b;border-radius:20px;padding:7px 10px;font-size:11px}nav{position:fixed;bottom:0;left:0;right:0;background:#121a14;border-top:1px solid #304034;padding:9px 10px max(12px,env(safe-area-inset-bottom));display:flex;justify-content:center}nav>div{width:min(650px,100%);display:flex;gap:5px}nav button{flex:1;background:transparent;color:#aab9ac;padding:12px 2px;font-size:12px}nav button.active{background:#baff62;color:#10200d}.hidden{display:none}.entry{padding:13px 0;border-bottom:1px solid #304034}.entry:last-child{border:0}.bar{height:13px;background:#304034;border-radius:9px;overflow:hidden;margin:8px 0 16px}.fill{height:100%;background:#baff62;border-radius:9px}.stat{font-size:29px;font-weight:900;color:#baff62}
+</style></head><body><main><header><div class="logo">GYM <span class="lime">BOOK</span></div><span class="pill">● TRAIN STRONG</span></header>
+<section id="training"><div class="card hero"><div class="muted">DEIN TRAININGSTAGEBUCH</div><h1>Jeder Satz zählt.</h1><div class="muted">Dein Training. Deine Fortschritte.</div></div><div class="row"><h2>Heutiges Training</h2><button onclick="addExercise()">+ Übung</button></div><div id="exerciseList"></div><button class="wide" onclick="saveWorkout()">Training speichern ✓</button></section>
+<section id="history" class="hidden"><h1>Trainingsverlauf</h1><div id="historyList"></div></section>
+<section id="progress" class="hidden"><h1>Fortschritt</h1><div class="card"><label>Übung auswählen</label><select id="progressSelect" onchange="drawProgress()"></select></div><div id="progressList"></div></section>
+<section id="more" class="hidden"><h1>Mehr</h1><div class="card"><h3>Backup erstellen</h3><p class="muted">Sichere deine Trainings regelmäßig als Datei.</p><button onclick="exportBackup()">Backup exportieren</button></div><div class="card"><h3>Backup wiederherstellen</h3><p class="muted">Wähle eine gespeicherte Gym-Book-JSON-Datei.</p><input type="file" accept=".json,application/json" onchange="importBackup(event)"></div><div class="card"><h3>Testdaten löschen</h3><p class="muted">Löscht alle gespeicherten Trainings.</p><button class="danger" onclick="resetData()">Alle Trainings löschen</button></div></section>
+</main><nav><div><button id="btn-training" class="active" onclick="showTab('training')">Training</button><button id="btn-history" onclick="showTab('history')">Verlauf</button><button id="btn-progress" onclick="showTab('progress')">Fortschritt</button><button id="btn-more" onclick="showTab('more')">Mehr</button></div></nav>
 <script>
-let workouts = JSON.parse(
-  localStorage.getItem("gymbook") || "[]"
-);
-
-function addExercise() {
-  let name = prompt("Name der Übung:");
-  if (!name) return;
-
-  let box = document.createElement("div");
-  box.className = "card";
-  box.dataset.name = name;
-
-  let title = document.createElement("h3");
-  title.textContent = name;
-  box.appendChild(title);
-
-  for (let i = 1; i <= 3; i++) {
-    let label = document.createElement("p");
-    label.textContent = "Satz " + i;
-    box.appendChild(label);
-
-    let weight = document.createElement("input");
-    weight.type = "number";
-    weight.placeholder = "Gewicht (kg)";
-    weight.className = "weight";
-    box.appendChild(weight);
-
-    let reps = document.createElement("input");
-    reps.type = "number";
-    reps.placeholder = "Wiederholungen";
-    reps.className = "reps";
-    box.appendChild(reps);
-  }
-
-  document.getElementById("exercises")
-    .appendChild(box);
-}
-
-function saveWorkout() {
-  let exercises = [];
-
-  document.querySelectorAll(
-    "#exercises .card"
-  ).forEach(box => {
-    let weights = box.querySelectorAll(".weight");
-    let reps = box.querySelectorAll(".reps");
-    let sets = [];
-
-    for (let i = 0; i < 3; i++) {
-      sets.push({
-        weight: weights[i].value,
-        reps: reps[i].value
-      });
-    }
-
-    exercises.push({
-      name: box.dataset.name,
-      sets: sets
-    });
-  });
-
-  if (!exercises.length) {
-    alert("Bitte zuerst eine Übung hinzufügen.");
-    return;
-  }
-
-  workouts.push({
-    date: new Date().toLocaleDateString("de-DE"),
-    exercises: exercises
-  });
-
-  localStorage.setItem(
-    "gymbook",
-    JSON.stringify(workouts)
-  );
-
-  document.getElementById("exercises").innerHTML = "";
-  showHistory();
-  alert("Training gespeichert!");
-}
-
-function showHistory() {
-  let history = document.getElementById("history");
-  history.innerHTML = "";
-
-  workouts.slice().reverse().forEach(workout => {
-    let box = document.createElement("div");
-    box.className = "card";
-
-    let date = document.createElement("h3");
-    date.textContent = workout.date;
-    box.appendChild(date);
-
-    workout.exercises.forEach(exercise => {
-      let title = document.createElement("p");
-      title.textContent = exercise.name;
-      box.appendChild(title);
-
-      exercise.sets.forEach((set, index) => {
-        let line = document.createElement("p");
-        line.textContent =
-          "Satz " + (index + 1) + ": " +
-          set.weight + " kg × " + set.reps;
-        box.appendChild(line);
-      });
-    });
-
-    history.appendChild(box);
-  });
-}
-
-showHistory();
-</script>
-</body>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js");
-  });
-}
-</script>
-</html>
+'use strict';const KEY='gymbook';let workouts=[];try{const d=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(d))workouts=d}catch(e){}let current=[];
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const items=w=>Array.isArray(w.exercises)?w.exercises:Array.isArray(w.items)?w.items:[];
+const sets=e=>Array.isArray(e.sets)?e.sets:[];
+const weight=s=>s.weight??s.kg??'';
+const dateText=x=>{let d=new Date(x);return isNaN(d.getTime())?String(x):d.toLocaleDateString('de-DE')};
+function lastExercise(name){for(let i=workouts.length-1;i>=0;i--){const found=items(workouts[i]).find(e=>e.name===name);if(found)return found}return null}
+function addExercise(){const name=prompt('Name der Übung:')?.trim();if(!name)return;const last=lastExercise(name);const count=last?Math.max(1,sets(last).length):3;current.push({name,sets:Array.from({length:count},()=>({weight:'',reps:''}))});renderTraining()}
+function updateSet(i,j,field,value){current[i].sets[j][field]=value}
+function addSet(i){current[i].sets.push({weight:'',reps:''});renderTraining()}
+function removeSet(i){if(current[i].sets.length>1){current[i].sets.pop();renderTraining()}}
+function removeExercise(i){if(confirm('Übung entfernen?')){current.splice(i,1);renderTraining()}}
+function renderTraining(){const el=document.getElementById('exerciseList');if(!current.length){el.innerHTML='<div class="card muted">Tippe auf „+ Übung“, um dein Training zu beginnen.</div>';return}el.innerHTML=current.map((ex,i)=>{const last=lastExercise(ex.name);const prev=last?'<div class="previous"><b>Letztes Training ('+sets(last).length+' Sätze):</b> '+sets(last).map((s,j)=>'Satz '+(j+1)+': '+esc(weight(s))+' kg × '+esc(s.reps)).join(' · ')+'</div>':'<div class="previous">Noch keine vorherigen Werte.</div>';return '<div class="card"><div class="row"><h3>'+esc(ex.name)+'</h3><button class="secondary" onclick="removeExercise('+i+')">✕</button></div><p class="muted">'+ex.sets.length+' Sätze</p>'+prev+ex.sets.map((s,j)=>'<div class="set"><div class="num">'+(j+1)+'.</div><div><label>Gewicht (kg)</label><input type="number" min="0" step="0.5" inputmode="decimal" value="'+esc(s.weight)+'" oninput="updateSet('+i+','+j+',\'weight\',this.value)"></div><div><label>Wiederholungen</label><input type="number" min="1" step="1" inputmode="numeric" value="'+esc(s.reps)+'" oninput="updateSet('+i+','+j+',\'reps\',this.value)"></div></div>').join('')+'<div class="actions"><button class="secondary" onclick="removeSet('+i+')" '+(ex.sets.length<=1?'disabled':'')+'>− Satz</button><button onclick="addSet('+i+')">+ Satz</button></div></div>'}).join('')}
+function saveWorkout(){if(!current.length)return alert('Bitte zuerst eine Übung hinzufügen.');if(!current.every(e=>e.sets.every(s=>s.weight!==''&&s.reps!==''&&Number.isFinite(Number(s.weight))&&Number(s.weight)>=0&&Number.isInteger(Number(s.reps))&&Number(s.reps)>0)))return alert('Bitte alle Sätze vollständig ausfüllen.');const entry={date:new Date().toISOString(),exercises:JSON.parse(JSON.stringify(current))};try{localStorage.setItem(KEY,JSON.stringify([...workouts,entry]));workouts.push(entry);current=[];renderTraining();alert('Training gespeichert! 💪')}catch(e){alert('Speichern fehlgeschlagen. Bitte Speicher prüfen.')}}
+function showTab(id){['training','history','progress','more'].forEach(t=>{document.getElementById(t).classList.toggle('hidden',t!==id);document.getElementById('btn-'+t).classList.toggle('active',t===id)});if(id==='history')drawHistory();if(id==='progress')drawProgress()}
+function drawHistory(){document.getElementById('historyList').innerHTML=workouts.length?workouts.slice().reverse().map(w=>'<div class="card"><h3>'+esc(dateText(w.date))+'</h3>'+items(w).map(ex=>'<div class="entry"><b>'+esc(ex.name)+'</b><div class="previous">'+sets(ex).map((s,j)=>'Satz '+(j+1)+': '+esc(weight(s))+' kg × '+esc(s.reps)).join(' · ')+'</div></div>').join('')+'</div>').join(''):'<div class="card muted">Noch keine Trainings gespeichert.</div>'}
+function drawProgress(){const select=document.getElementById('progressSelect'),names=[...new Set(workouts.flatMap(w=>items(w).map(e=>e.name)))],old=select.value;select.innerHTML=names.map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('');if(names.includes(old))select.value=old;const target=document.getElementById('progressList');if(!names.length){target.innerHTML='<div class="card muted">Speichere zuerst ein Training.</div>';return}const points=workouts.map(w=>{const ex=items(w).find(e=>e.name===select.value);return ex?{date:w.date,value:Math.max(0,...sets(ex).map(s=>Number(weight(s))))}:null}).filter(Boolean);const max=Math.max(1,...points.map(p=>p.value)),best=Math.max(...points.map(p=>p.value));target.innerHTML='<div class="card"><div class="muted">BESTES SATZGEWICHT</div><div class="stat">'+best+' kg</div></div><div class="card"><h3>Gewichtsentwicklung</h3><p class="muted">Maximales Gewicht je Training</p>'+points.slice(-12).map(p=>'<div class="row"><span class="muted">'+esc(dateText(p.date))+'</span><b>'+p.value+' kg</b></div><div class="bar"><div class="fill" style="width:'+(p.value/max*100)+'%"></div></div>').join('')+'</div>'}
+function exportBackup(){const blob=new Blob([JSON.stringify(workouts,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='gymbook-backup.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)}
+function importBackup(event){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data)||!data.every(w=>w&&typeof w==='object'&&Array.isArray(w.exercises||w.items)))throw Error('Format');if(!confirm('Alle bisherigen Trainings durch dieses Backup ersetzen?'))return;localStorage.setItem(KEY,JSON.stringify(data));workouts=data;current=[];renderTraining();alert('Backup wiederhergestellt.')}catch(e){alert('Backup konnte nicht gelesen werden.')}};reader.readAsText(file);event.target.value=''}
+function resetData(){if(!confirm('Wirklich ALLE Trainings löschen?'))return;if(!confirm('Letzte Bestätigung: endgültig löschen?'))return;localStorage.setItem(KEY,'[]');workouts=[];current=[];renderTraining();alert('Trainingsdaten gelöscht.')}
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(console.error));renderTraining();
+</script></body></html>
