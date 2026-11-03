@@ -379,6 +379,15 @@ function deletePlan(planId) {
 
   plans = plans.filter(p => p.id !== planId);
   savePlans();
+
+  if (activePlanId === planId) {
+    current = [];
+    activePlanId = null;
+    document.getElementById("activePlanName").textContent =
+      "Kein Training aktiv";
+    renderTraining();
+  }
+
   renderPlans();
 }
 
@@ -463,7 +472,20 @@ function startPlan(planId) {
   renderTraining();
   showTab("training");
 }
+function showEmptyTraining() {
+  if (activePlanId !== null || current.length > 0) {
+    return;
+  }
 
+  document.getElementById("activePlanName").textContent =
+    "Kein Training aktiv";
+
+  document.getElementById("exerciseList").innerHTML =
+    '<div class="card muted">' +
+    'Du hast gerade kein Training gestartet. ' +
+    'Gehe zu „Pläne“ und starte dort einen Trainingsplan.' +
+    '</div>';
+}
 function updateSet(i, j, field, value) {
   current[i].sets[j][field] = value;
 }
@@ -630,6 +652,7 @@ function showTab(id) {
     });
 
   if (id === "plans") renderPlans();
+  if (id === "training") showEmptyTraining();
   if (id === "history") drawHistory();
   if (id === "progress") drawProgress();
 }
@@ -985,6 +1008,10 @@ function resetData() {
     plans = [];
     current = [];
     activePlanId = null;
+    
+    document.getElementById("activePlanName").textContent =
+  "Kein Training aktiv";
+renderTraining();
 
     renderPlans();
     showTab("plans");
