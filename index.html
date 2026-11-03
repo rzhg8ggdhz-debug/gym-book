@@ -1,33 +1,1009 @@
-<!doctype html>
-<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b100d"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Gym Book"><title>Gym Book 3.0</title>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b100d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gym Book">
+<title>Gym Book 5.0</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0b100d;color:#f5f9f4;font:16px -apple-system,BlinkMacSystemFont,Arial,sans-serif}main{max-width:650px;margin:auto;padding:22px 16px 110px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.logo{font-size:27px;font-weight:900}.lime{color:#baff62}.muted{color:#a0b3a3;font-size:13px;line-height:1.5}h1{font-size:29px;margin:7px 0}h2{font-size:21px;margin:23px 0 12px}h3{font-size:18px;margin:0}.card{background:#172019;border:1px solid #304034;border-radius:20px;padding:18px;margin:13px 0}.hero{background:linear-gradient(125deg,#304c29,#172019);padding:24px}.row{display:flex;justify-content:space-between;align-items:center;gap:9px}button{border:0;border-radius:12px;background:#baff62;color:#11200e;padding:12px 13px;font-size:14px;font-weight:800}button:disabled{opacity:.4}.secondary{background:#2e3d31;color:#f1f9f1}.danger{background:#4a2b2e;color:#ffced0}.wide{width:100%}input,select{width:100%;padding:12px;background:#0d1510;color:white;border:1px solid #435747;border-radius:11px;font-size:16px}label{display:block;color:#a7b9a9;font-size:12px;margin-bottom:6px}.set{display:grid;grid-template-columns:28px 1fr 1fr;gap:8px;align-items:end;margin:12px 0}.num{color:#baff62;font-weight:900;padding-bottom:13px}.previous{color:#bfd0c0;font-size:12px;line-height:1.7;margin:12px 0}.actions{display:flex;gap:8px;margin-top:14px}.actions button{flex:1}.pill{background:#2c4628;color:#caff9b;border-radius:20px;padding:7px 10px;font-size:11px}nav{position:fixed;bottom:0;left:0;right:0;background:#121a14;border-top:1px solid #304034;padding:9px 10px max(12px,env(safe-area-inset-bottom));display:flex;justify-content:center}nav>div{width:min(650px,100%);display:flex;gap:5px}nav button{flex:1;background:transparent;color:#aab9ac;padding:12px 2px;font-size:12px}nav button.active{background:#baff62;color:#10200d}.hidden{display:none}.entry{padding:13px 0;border-bottom:1px solid #304034}.entry:last-child{border:0}.bar{height:13px;background:#304034;border-radius:9px;overflow:hidden;margin:8px 0 16px}.fill{height:100%;background:#baff62;border-radius:9px}.stat{font-size:29px;font-weight:900;color:#baff62}
-</style></head><body><main><header><div class="logo">GYM <span class="lime">BOOK</span></div><span class="pill">● TRAIN STRONG</span></header>
-<section id="training"><div class="card hero"><div class="muted">DEIN TRAININGSTAGEBUCH</div><h1>Jeder Satz zählt.</h1><div class="muted">Dein Training. Deine Fortschritte.</div></div><div class="row"><h2>Heutiges Training</h2><button onclick="addExercise()">+ Übung</button></div><div id="exerciseList"></div><button class="wide" onclick="saveWorkout()">Training speichern ✓</button></section>
-<section id="history" class="hidden"><h1>Trainingsverlauf</h1><div id="historyList"></div></section>
-<section id="progress" class="hidden"><h1>Fortschritt</h1><div class="card"><label>Übung auswählen</label><select id="progressSelect" onchange="drawProgress()"></select></div><div id="progressList"></div></section>
-<section id="more" class="hidden"><h1>Mehr</h1><div class="card"><h3>Backup erstellen</h3><p class="muted">Sichere deine Trainings regelmäßig als Datei.</p><button onclick="exportBackup()">Backup exportieren</button></div><div class="card"><h3>Backup wiederherstellen</h3><p class="muted">Wähle eine gespeicherte Gym-Book-JSON-Datei.</p><input type="file" accept=".json,application/json" onchange="importBackup(event)"></div><div class="card"><h3>Testdaten löschen</h3><p class="muted">Löscht alle gespeicherten Trainings.</p><button class="danger" onclick="resetData()">Alle Trainings löschen</button></div></section>
-</main><nav><div><button id="btn-training" class="active" onclick="showTab('training')">Training</button><button id="btn-history" onclick="showTab('history')">Verlauf</button><button id="btn-progress" onclick="showTab('progress')">Fortschritt</button><button id="btn-more" onclick="showTab('more')">Mehr</button></div></nav>
+*{box-sizing:border-box}
+body{margin:0;background:#0b100d;color:#f5f8f5;font-family:-apple-system,Arial,sans-serif}
+main{max-width:650px;margin:auto;padding:22px 16px 110px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.logo{font-size:27px;font-weight:900}
+.green{color:#b9ff58}
+.muted{color:#9aaa9e;font-size:13px;line-height:1.5}
+h1{font-size:29px;margin:8px 0}
+h2{font-size:21px;margin:22px 0 12px}
+h3{font-size:17px;margin:0 0 9px}
+.card{background:#172019;border:1px solid #2c3a2f;border-radius:20px;padding:18px;margin:13px 0}
+.hero{background:linear-gradient(125deg,#2b4824,#172019)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:9px}
+button{border:0;border-radius:12px;background:#b9ff58;color:#10200a;padding:12px;font-size:14px;font-weight:800}
+.secondary{background:#2c3b30;color:#f0f7ef}
+.danger{background:#48282c;color:#ffc2c5}
+.wide{width:100%}
+input,select{width:100%;padding:12px;background:#0d140f;color:white;border:1px solid #415345;border-radius:11px;font-size:16px}
+label{display:block;color:#a8b8aa;font-size:12px;margin-bottom:5px}
+.set{display:grid;grid-template-columns:28px 1fr 1fr;gap:8px;align-items:end;margin:11px 0}
+.number{color:#b9ff58;font-weight:900;padding-bottom:12px}
+.previous{color:#b1c5b4;font-size:12px;line-height:1.7;margin:10px 0}
+.actions{display:flex;gap:8px;margin-top:14px}
+.actions button{flex:1}
+.pill{background:#2d4528;color:#cfff99;border-radius:20px;padding:7px 10px;font-size:12px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#131b15;border-top:1px solid #2b3a2e;padding:9px 10px 16px;display:flex;justify-content:center}
+nav>div{width:min(650px,100%);display:flex;gap:5px}
+nav button{flex:1;background:transparent;color:#acbbad;padding:12px 2px;font-size:12px}
+nav button.active{background:#b9ff58;color:#11200b}
+.hidden{display:none}
+.entry{padding:12px 0;border-bottom:1px solid #304034}
+.bar{height:13px;background:#304034;border-radius:9px;overflow:hidden;margin:7px 0 15px}
+.fill{height:100%;background:#b9ff58;border-radius:9px}
+.stat{font-size:26px;font-weight:900;color:#b9ff58}
+</style>
+</head>
+
+<body>
+<main>
+
+<header>
+  <div class="logo">GYM <span class="green">BOOK</span></div>
+  <span class="pill">● TRAIN STRONG</span>
+</header>
+
+<section id="plans">
+  <div class="card hero">
+    <div class="muted">DEIN PERSÖNLICHER TRAININGSPLAN</div>
+    <h1>Dein Plan. Dein Fortschritt.</h1>
+    <p class="muted">
+      Einmal erstellen, immer wieder trainieren.
+    </p>
+  </div>
+
+  <div class="row">
+    <h2>Meine Trainingspläne</h2>
+    <button onclick="createPlan()">+ Plan</button>
+  </div>
+
+  <div id="planList"></div>
+</section>
+
+<section id="training" class="hidden">
+  <div class="row">
+    <h2>Aktuelles Training</h2>
+    <button class="secondary" onclick="showTab('plans')">
+      Zurück
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="muted">TRAININGSPLAN</div>
+    <h3 id="activePlanName">Mein Training</h3>
+    <p class="muted">
+      Die letzten Gewichte und Wiederholungen
+      sind bereits vorausgefüllt.
+    </p>
+  </div>
+
+  <div class="row">
+    <h2>Übungen</h2>
+    <button onclick="addTrainingExercise()">+ Übung</button>
+  </div>
+
+  <div id="exerciseList"></div>
+
+  <button class="wide" onclick="saveWorkout()">
+    Training speichern ✓
+  </button>
+</section>
+
+<section id="history" class="hidden">
+  <h1>Trainingsverlauf</h1>
+  <p class="muted">
+    Alle abgeschlossenen Trainingseinheiten.
+  </p>
+  <div id="historyList"></div>
+</section>
+
+<section id="progress" class="hidden">
+  <h1>Dein Fortschritt</h1>
+  <p class="muted">
+    Vergleiche deine Kraftentwicklung und
+    dein gesamtes Trainingsvolumen.
+  </p>
+
+  <div class="card">
+    <label>Übung auswählen</label>
+    <select
+      id="progressSelect"
+      onchange="drawProgress()">
+    </select>
+
+    <label style="margin-top:15px">
+      Fortschritt anzeigen
+    </label>
+    <select
+      id="progressMetric"
+      onchange="drawProgress()">
+      <option value="weight">
+        Maximales Satzgewicht (kg)
+      </option>
+      <option value="volume">
+        Trainingsvolumen (kg)
+      </option>
+    </select>
+  </div>
+
+  <div id="progressStats"></div>
+
+  <div class="card">
+    <h3>Deine Entwicklung</h3>
+    <canvas
+      id="progressChart"
+      width="320"
+      height="220"
+      style="width:100%;height:220px">
+    </canvas>
+  </div>
+
+  <div id="progressDetails"></div>
+</section>
+
+<section id="more" class="hidden">
+  <h1>Mehr</h1>
+
+  <div class="card">
+    <h3>Backup erstellen</h3>
+    <p class="muted">
+      Sichere deine Trainingspläne und
+      alle bisherigen Trainingsergebnisse.
+    </p>
+    <button onclick="exportBackup()">
+      Backup exportieren
+    </button>
+  </div>
+
+  <div class="card">
+    <h3>Backup wiederherstellen</h3>
+    <p class="muted">
+      Wähle eine gespeicherte Gym-Book-Datei.
+    </p>
+    <input
+      type="file"
+      accept=".json,application/json"
+      onchange="importBackup(event)">
+  </div>
+
+  <div class="card">
+    <h3>Trainingsdaten löschen</h3>
+    <p class="muted">
+      Achtung: Diese Aktion entfernt deine
+      Trainingspläne und Ergebnisse.
+    </p>
+    <button class="danger" onclick="resetData()">
+      Alle Daten löschen
+    </button>
+  </div>
+</section>
+
+</main>
+
+<nav>
+  <div>
+    <button
+      id="btn-plans"
+      class="active"
+      onclick="showTab('plans')">
+      Pläne
+    </button>
+
+    <button
+      id="btn-training"
+      onclick="showTab('training')">
+      Training
+    </button>
+
+    <button
+      id="btn-history"
+      onclick="showTab('history')">
+      Verlauf
+    </button>
+
+    <button
+      id="btn-progress"
+      onclick="showTab('progress')">
+      Fortschritt
+    </button>
+
+    <button
+      id="btn-more"
+      onclick="showTab('more')">
+      Mehr
+    </button>
+  </div>
+</nav>
+
 <script>
-'use strict';const KEY='gymbook';let workouts=[];try{const d=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(d))workouts=d}catch(e){}let current=[];
-const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const items=w=>Array.isArray(w.exercises)?w.exercises:Array.isArray(w.items)?w.items:[];
-const sets=e=>Array.isArray(e.sets)?e.sets:[];
-const weight=s=>s.weight??s.kg??'';
-const dateText=x=>{let d=new Date(x);return isNaN(d.getTime())?String(x):d.toLocaleDateString('de-DE')};
-function lastExercise(name){for(let i=workouts.length-1;i>=0;i--){const found=items(workouts[i]).find(e=>e.name===name);if(found)return found}return null}
-function addExercise(){const name=prompt('Name der Übung:')?.trim();if(!name)return;const last=lastExercise(name);const count=last?Math.max(1,sets(last).length):3;current.push({name,sets:Array.from({length:count},()=>({weight:'',reps:''}))});renderTraining()}
-function updateSet(i,j,field,value){current[i].sets[j][field]=value}
-function addSet(i){current[i].sets.push({weight:'',reps:''});renderTraining()}
-function removeSet(i){if(current[i].sets.length>1){current[i].sets.pop();renderTraining()}}
-function removeExercise(i){if(confirm('Übung entfernen?')){current.splice(i,1);renderTraining()}}
-function renderTraining(){const el=document.getElementById('exerciseList');if(!current.length){el.innerHTML='<div class="card muted">Tippe auf „+ Übung“, um dein Training zu beginnen.</div>';return}el.innerHTML=current.map((ex,i)=>{const last=lastExercise(ex.name);const prev=last?'<div class="previous"><b>Letztes Training ('+sets(last).length+' Sätze):</b> '+sets(last).map((s,j)=>'Satz '+(j+1)+': '+esc(weight(s))+' kg × '+esc(s.reps)).join(' · ')+'</div>':'<div class="previous">Noch keine vorherigen Werte.</div>';return '<div class="card"><div class="row"><h3>'+esc(ex.name)+'</h3><button class="secondary" onclick="removeExercise('+i+')">✕</button></div><p class="muted">'+ex.sets.length+' Sätze</p>'+prev+ex.sets.map((s,j)=>'<div class="set"><div class="num">'+(j+1)+'.</div><div><label>Gewicht (kg)</label><input type="number" min="0" step="0.5" inputmode="decimal" value="'+esc(s.weight)+'" oninput="updateSet('+i+','+j+',\'weight\',this.value)"></div><div><label>Wiederholungen</label><input type="number" min="1" step="1" inputmode="numeric" value="'+esc(s.reps)+'" oninput="updateSet('+i+','+j+',\'reps\',this.value)"></div></div>').join('')+'<div class="actions"><button class="secondary" onclick="removeSet('+i+')" '+(ex.sets.length<=1?'disabled':'')+'>− Satz</button><button onclick="addSet('+i+')">+ Satz</button></div></div>'}).join('')}
-function saveWorkout(){if(!current.length)return alert('Bitte zuerst eine Übung hinzufügen.');if(!current.every(e=>e.sets.every(s=>s.weight!==''&&s.reps!==''&&Number.isFinite(Number(s.weight))&&Number(s.weight)>=0&&Number.isInteger(Number(s.reps))&&Number(s.reps)>0)))return alert('Bitte alle Sätze vollständig ausfüllen.');const entry={date:new Date().toISOString(),exercises:JSON.parse(JSON.stringify(current))};try{localStorage.setItem(KEY,JSON.stringify([...workouts,entry]));workouts.push(entry);current=[];renderTraining();alert('Training gespeichert! 💪')}catch(e){alert('Speichern fehlgeschlagen. Bitte Speicher prüfen.')}}
-function showTab(id){['training','history','progress','more'].forEach(t=>{document.getElementById(t).classList.toggle('hidden',t!==id);document.getElementById('btn-'+t).classList.toggle('active',t===id)});if(id==='history')drawHistory();if(id==='progress')drawProgress()}
-function drawHistory(){document.getElementById('historyList').innerHTML=workouts.length?workouts.slice().reverse().map(w=>'<div class="card"><h3>'+esc(dateText(w.date))+'</h3>'+items(w).map(ex=>'<div class="entry"><b>'+esc(ex.name)+'</b><div class="previous">'+sets(ex).map((s,j)=>'Satz '+(j+1)+': '+esc(weight(s))+' kg × '+esc(s.reps)).join(' · ')+'</div></div>').join('')+'</div>').join(''):'<div class="card muted">Noch keine Trainings gespeichert.</div>'}
-function drawProgress(){const select=document.getElementById('progressSelect'),names=[...new Set(workouts.flatMap(w=>items(w).map(e=>e.name)))],old=select.value;select.innerHTML=names.map(n=>'<option value="'+esc(n)+'">'+esc(n)+'</option>').join('');if(names.includes(old))select.value=old;const target=document.getElementById('progressList');if(!names.length){target.innerHTML='<div class="card muted">Speichere zuerst ein Training.</div>';return}const points=workouts.map(w=>{const ex=items(w).find(e=>e.name===select.value);return ex?{date:w.date,value:Math.max(0,...sets(ex).map(s=>Number(weight(s))))}:null}).filter(Boolean);const max=Math.max(1,...points.map(p=>p.value)),best=Math.max(...points.map(p=>p.value));target.innerHTML='<div class="card"><div class="muted">BESTES SATZGEWICHT</div><div class="stat">'+best+' kg</div></div><div class="card"><h3>Gewichtsentwicklung</h3><p class="muted">Maximales Gewicht je Training</p>'+points.slice(-12).map(p=>'<div class="row"><span class="muted">'+esc(dateText(p.date))+'</span><b>'+p.value+' kg</b></div><div class="bar"><div class="fill" style="width:'+(p.value/max*100)+'%"></div></div>').join('')+'</div>'}
-function exportBackup(){const blob=new Blob([JSON.stringify(workouts,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='gymbook-backup.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)}
-function importBackup(event){const file=event.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data)||!data.every(w=>w&&typeof w==='object'&&Array.isArray(w.exercises||w.items)))throw Error('Format');if(!confirm('Alle bisherigen Trainings durch dieses Backup ersetzen?'))return;localStorage.setItem(KEY,JSON.stringify(data));workouts=data;current=[];renderTraining();alert('Backup wiederhergestellt.')}catch(e){alert('Backup konnte nicht gelesen werden.')}};reader.readAsText(file);event.target.value=''}
-function resetData(){if(!confirm('Wirklich ALLE Trainings löschen?'))return;if(!confirm('Letzte Bestätigung: endgültig löschen?'))return;localStorage.setItem(KEY,'[]');workouts=[];current=[];renderTraining();alert('Trainingsdaten gelöscht.')}
-if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(console.error));renderTraining();
-</script></body></html>
+
+const STORAGE = "gymbook";
+const PLAN_STORAGE = "gymbook_plans_v5";
+
+function readSaved(key, fallback) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return value === null ? fallback : value;
+  } catch (error) {
+    return fallback;
+  }
+}
+
+let workouts = readSaved(STORAGE, []);
+let plans = readSaved(PLAN_STORAGE, []);
+
+if (!Array.isArray(workouts)) workouts = [];
+if (!Array.isArray(plans)) plans = [];
+
+let current = [];
+let activePlanId = null;
+
+function savePlans() {
+  localStorage.setItem(PLAN_STORAGE, JSON.stringify(plans));
+}
+
+function saveWorkouts() {
+  localStorage.setItem(STORAGE, JSON.stringify(workouts));
+}
+
+function clean(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[c]));
+}
+
+function exercisesOf(workout) {
+  return workout.exercises || workout.items || [];
+}
+
+function weightOf(set) {
+  return set.weight ?? set.kg ?? "";
+}
+
+function previousExercise(name) {
+  for (let i = workouts.length - 1; i >= 0; i--) {
+    const found = exercisesOf(workouts[i])
+      .find(ex => ex.name === name);
+
+    if (found) return found;
+  }
+  return null;
+}
+
+function newSets(count) {
+  return Array.from({ length: count }, () => ({
+    weight: "",
+    reps: ""
+  }));
+}
+
+function createPlan() {
+  const name = prompt(
+    "Wie soll dein Trainingsplan heißen?",
+    "Mein Trainingsplan"
+  );
+
+  if (!name || !name.trim()) return;
+
+  const plan = {
+    id: String(Date.now()) + Math.random(),
+    name: name.trim(),
+    exercises: []
+  };
+
+  plans.push(plan);
+  savePlans();
+  renderPlans();
+}
+
+function addPlanExercise(planId) {
+  const plan = plans.find(p => p.id === planId);
+  if (!plan) return;
+
+  const name = prompt("Name der Übung:");
+  if (!name || !name.trim()) return;
+
+  const answer = prompt(
+    "Wie viele Sätze möchtest du machen?",
+    "3"
+  );
+
+  if (answer === null) return;
+
+  const count = Number(answer);
+
+  if (!Number.isInteger(count) || count < 1 || count > 30) {
+    alert("Bitte eine Satzanzahl zwischen 1 und 30 eingeben.");
+    return;
+  }
+
+  plan.exercises.push({
+    name: name.trim(),
+    sets: newSets(count)
+  });
+
+  savePlans();
+  renderPlans();
+}
+
+function removePlanExercise(planId, index) {
+  const plan = plans.find(p => p.id === planId);
+  if (!plan) return;
+
+  if (!confirm("Übung dauerhaft aus dem Plan entfernen?")) {
+    return;
+  }
+
+  plan.exercises.splice(index, 1);
+  savePlans();
+  renderPlans();
+}
+
+function changePlanSets(planId, index, difference) {
+  const plan = plans.find(p => p.id === planId);
+  if (!plan) return;
+
+  const exercise = plan.exercises[index];
+  if (!exercise) return;
+
+  if (difference > 0 && exercise.sets.length < 30) {
+    exercise.sets.push({ weight: "", reps: "" });
+  }
+
+  if (difference < 0 && exercise.sets.length > 1) {
+    exercise.sets.pop();
+  }
+
+  savePlans();
+  renderPlans();
+}
+
+function deletePlan(planId) {
+  if (!confirm("Diesen Trainingsplan dauerhaft löschen?")) {
+    return;
+  }
+
+  plans = plans.filter(p => p.id !== planId);
+  savePlans();
+  renderPlans();
+}
+
+function renderPlans() {
+  const target = document.getElementById("planList");
+
+  if (!plans.length) {
+    target.innerHTML =
+      '<div class="card muted">' +
+      'Noch kein Trainingsplan vorhanden. ' +
+      'Tippe auf „+ Plan“, um deinen ersten Plan anzulegen.' +
+      '</div>';
+    return;
+  }
+
+  target.innerHTML = plans.map(plan => {
+    const exercises = plan.exercises.map((ex, i) =>
+      '<div class="entry">' +
+      '<div class="row">' +
+      '<div><b>' + clean(ex.name) + '</b>' +
+      '<div class="small">' +
+      ex.sets.length + ' Sätze</div></div>' +
+      '<button class="danger" onclick="removePlanExercise(' +
+      "'" + plan.id + "'," + i + ')">✕</button>' +
+      '</div>' +
+      '<div class="actions">' +
+      '<button class="secondary" onclick="changePlanSets(' +
+      "'" + plan.id + "'," + i + ',-1)">− Satz</button>' +
+      '<button class="secondary" onclick="changePlanSets(' +
+      "'" + plan.id + "'," + i + ',1)">+ Satz</button>' +
+      '</div></div>'
+    ).join("");
+
+    return '<div class="card">' +
+      '<h3>' + clean(plan.name) + '</h3>' +
+      '<p class="muted">' +
+      plan.exercises.length + ' Übungen</p>' +
+      exercises +
+      '<div class="actions">' +
+      '<button class="secondary" onclick="addPlanExercise(' +
+      "'" + plan.id + "'" + ')">+ Übung</button>' +
+      '<button onclick="startPlan(' +
+      "'" + plan.id + "'" + ')">Training starten</button>' +
+      '</div>' +
+      '<button class="danger wide" style="margin-top:10px" ' +
+      'onclick="deletePlan(' +
+      "'" + plan.id + "'" + ')">Plan löschen</button>' +
+      '</div>';
+  }).join("");
+}
+
+function startPlan(planId) {
+  const plan = plans.find(p => p.id === planId);
+  if (!plan) return;
+
+  if (!plan.exercises.length) {
+    alert("Bitte zuerst Übungen zum Plan hinzufügen.");
+    return;
+  }
+
+  activePlanId = planId;
+
+  current = plan.exercises.map(ex => {
+    const previous = previousExercise(ex.name);
+
+    return {
+      name: ex.name,
+      sets: ex.sets.map((set, i) => {
+        const old = previous?.sets?.[i];
+
+        return {
+          weight: old ? String(weightOf(old)) : "",
+          reps: old ? String(old.reps ?? "") : ""
+        };
+      })
+    };
+  });
+
+  document.getElementById("activePlanName").textContent =
+    plan.name;
+
+  renderTraining();
+  showTab("training");
+}
+
+function updateSet(i, j, field, value) {
+  current[i].sets[j][field] = value;
+}
+
+function addSet(i) {
+  if (current[i].sets.length >= 30) {
+    alert("Maximal 30 Sätze pro Übung.");
+    return;
+  }
+  current[i].sets.push({ weight: "", reps: "" });
+  renderTraining();
+}
+
+function removeSet(i) {
+  if (current[i].sets.length <= 1) {
+    alert("Mindestens ein Satz ist erforderlich.");
+    return;
+  }
+  current[i].sets.pop();
+  renderTraining();
+}
+
+function addTrainingExercise() {
+  const name = prompt("Welche Übung möchtest du hinzufügen?");
+  if (!name || !name.trim()) return;
+
+  const answer = prompt("Wie viele Sätze?", "3");
+  if (answer === null) return;
+
+  const count = Number(answer);
+  if (!Number.isInteger(count) || count < 1 || count > 30) {
+    alert("Bitte eine Satzanzahl zwischen 1 und 30 eingeben.");
+    return;
+  }
+
+  const previous = previousExercise(name.trim());
+
+  current.push({
+    name: name.trim(),
+    sets: Array.from({ length: count }, (_, i) => ({
+      weight: previous?.sets?.[i]
+        ? String(weightOf(previous.sets[i])) : "",
+      reps: previous?.sets?.[i]
+        ? String(previous.sets[i].reps ?? "") : ""
+    }))
+  });
+
+  renderTraining();
+}
+
+function removeExercise(i) {
+  if (!confirm("Übung aus dem heutigen Training entfernen?")) {
+    return;
+  }
+  current.splice(i, 1);
+  renderTraining();
+}
+
+function renderTraining() {
+  const target = document.getElementById("exerciseList");
+
+  if (!current.length) {
+    target.innerHTML =
+      '<div class="card muted">Noch keine Übungen vorhanden.</div>';
+    return;
+  }
+
+  target.innerHTML = current.map((ex, i) => {
+    const previous = previousExercise(ex.name);
+
+    const lastText = previous
+      ? '<div class="previous"><b>Letztes Training:</b> ' +
+        previous.sets.map((s, j) =>
+          'Satz ' + (j + 1) + ': ' +
+          clean(weightOf(s)) + ' kg × ' +
+          clean(s.reps) + ' Wdh.'
+        ).join(' · ') + '</div>'
+      : '<div class="previous">Noch keine Vorwerte.</div>';
+
+    const rows = ex.sets.map((s, j) =>
+      '<div class="set">' +
+      '<div class="number">' + (j + 1) + '.</div>' +
+      '<div><label>Gewicht (kg)</label>' +
+      '<input type="number" min="0" step="0.5" ' +
+      'inputmode="decimal" value="' + clean(s.weight) + '" ' +
+      'oninput="updateSet(' + i + ',' + j +
+      ',\'weight\',this.value)"></div>' +
+      '<div><label>Wiederholungen</label>' +
+      '<input type="number" min="1" step="1" ' +
+      'inputmode="numeric" value="' + clean(s.reps) + '" ' +
+      'oninput="updateSet(' + i + ',' + j +
+      ',\'reps\',this.value)"></div>' +
+      '</div>'
+    ).join("");
+
+    return '<div class="card">' +
+      '<div class="row">' +
+      '<h3>' + clean(ex.name) + '</h3>' +
+      '<button class="secondary" onclick="removeExercise(' +
+      i + ')">✕</button></div>' +
+      '<div class="pill">' + ex.sets.length +
+      ' Sätze</div>' +
+      lastText + rows +
+      '<div class="actions">' +
+      '<button class="secondary" onclick="removeSet(' +
+      i + ')">− Satz</button>' +
+      '<button onclick="addSet(' +
+      i + ')">+ Satz</button>' +
+      '</div></div>';
+  }).join("");
+}
+
+function saveWorkout() {
+  if (!current.length) {
+    alert("Bitte zuerst eine Übung hinzufügen.");
+    return;
+  }
+
+  const valid = current.every(ex =>
+    ex.sets.length > 0 && ex.sets.every(s =>
+      s.weight !== "" &&
+      s.reps !== "" &&
+      Number.isFinite(Number(s.weight)) &&
+      Number(s.weight) >= 0 &&
+      Number.isInteger(Number(s.reps)) &&
+      Number(s.reps) > 0
+    )
+  );
+
+  if (!valid) {
+    alert("Bitte Gewicht und Wiederholungen aller Sätze ausfüllen.");
+    return;
+  }
+
+  const workout = {
+    date: new Date().toISOString(),
+    planId: activePlanId,
+    exercises: JSON.parse(JSON.stringify(current))
+  };
+
+  try {
+    localStorage.setItem(
+      STORAGE,
+      JSON.stringify([...workouts, workout])
+    );
+    workouts.push(workout);
+    current = [];
+    activePlanId = null;
+    alert("Training erfolgreich gespeichert! 💪");
+    showTab("plans");
+  } catch (error) {
+    alert("Speichern fehlgeschlagen. Bitte Speicherplatz prüfen.");
+  }
+}
+
+function showTab(id) {
+  ["plans", "training", "history", "progress", "more"]
+    .forEach(tab => {
+      document.getElementById(tab)
+        .classList.toggle("hidden", tab !== id);
+
+      document.getElementById("btn-" + tab)
+        .classList.toggle("active", tab === id);
+    });
+
+  if (id === "plans") renderPlans();
+  if (id === "history") drawHistory();
+  if (id === "progress") drawProgress();
+}
+
+function dateLabel(value) {
+  const date = new Date(value);
+
+  if (isNaN(date.getTime())) {
+    return String(value);
+  }
+
+  return date.toLocaleDateString("de-DE");
+}
+
+function drawHistory() {
+  const target = document.getElementById("historyList");
+
+  if (!workouts.length) {
+    target.innerHTML =
+      '<div class="card muted">' +
+      'Noch keine Trainings gespeichert.' +
+      '</div>';
+    return;
+  }
+
+  target.innerHTML = workouts.slice().reverse().map(w => {
+    const exerciseHTML = exercisesOf(w).map(ex => {
+      const sets = (ex.sets || []).map((s, j) =>
+        'Satz ' + (j + 1) + ': ' +
+        clean(weightOf(s)) + ' kg × ' +
+        clean(s.reps) + ' Wdh.'
+      ).join(' · ');
+
+      return '<div class="entry">' +
+        '<b>' + clean(ex.name) + '</b>' +
+        '<div class="previous">' + sets + '</div>' +
+        '</div>';
+    }).join('');
+
+    return '<div class="card">' +
+      '<h3>' + clean(dateLabel(w.date)) + '</h3>' +
+      exerciseHTML +
+      '</div>';
+  }).join('');
+}
+
+function exerciseVolume(ex) {
+  return (ex.sets || []).reduce((sum, set) => {
+    return sum +
+      Number(weightOf(set)) * Number(set.reps || 0);
+  }, 0);
+}
+
+function exerciseMaxWeight(ex) {
+  return Math.max(
+    0,
+    ...(ex.sets || []).map(s => Number(weightOf(s)))
+  );
+}
+
+function drawProgress() {
+  const select = document.getElementById("progressSelect");
+  const metric = document.getElementById("progressMetric").value;
+
+  const names = [...new Set(workouts.flatMap(w =>
+    exercisesOf(w).map(ex => ex.name)
+  ))];
+
+  const previousSelection = select.value;
+
+  select.innerHTML = names.map(name =>
+    '<option value="' + clean(name) + '">' +
+    clean(name) + '</option>'
+  ).join('');
+
+  if (names.includes(previousSelection)) {
+    select.value = previousSelection;
+  }
+
+  const stats = document.getElementById("progressStats");
+  const details = document.getElementById("progressDetails");
+
+  if (!names.length) {
+    stats.innerHTML =
+      '<div class="card muted">' +
+      'Speichere zuerst ein Training.' +
+      '</div>';
+
+    details.innerHTML = '';
+
+    const canvas = document.getElementById("progressChart");
+    canvas.getContext("2d").clearRect(
+      0, 0, canvas.width, canvas.height
+    );
+    return;
+  }
+
+  const points = workouts.map(w => {
+    const ex = exercisesOf(w)
+      .find(e => e.name === select.value);
+
+    if (!ex) return null;
+
+    return {
+      date: w.date,
+      value: metric === "volume"
+        ? exerciseVolume(ex)
+        : exerciseMaxWeight(ex)
+    };
+  }).filter(Boolean);
+
+  const first = points[0].value;
+  const last = points[points.length - 1].value;
+  const before = points.length > 1
+    ? points[points.length - 2].value
+    : last;
+
+  const totalChange = last - first;
+  const recentChange = last - before;
+  const unit = "kg";
+
+  function signed(value) {
+    return (value > 0 ? "+" : "") +
+      Number(value.toFixed(2)) + " " + unit;
+  }
+
+  const metricName = metric === "volume"
+    ? "Trainingsvolumen"
+    : "Maximales Satzgewicht";
+
+  stats.innerHTML =
+    '<div class="card">' +
+    '<div class="muted">' + metricName + '</div>' +
+    '<div class="stat">' +
+    Number(last.toFixed(2)) + ' kg</div>' +
+    '</div>' +
+
+    '<div class="card">' +
+    '<div class="muted">Seit dem ersten Training</div>' +
+    '<div class="stat">' + signed(totalChange) + '</div>' +
+    '<p class="muted">Erstes Training: ' +
+    first + ' kg</p>' +
+    '</div>' +
+
+    '<div class="card">' +
+    '<div class="muted">Zum vorherigen Training</div>' +
+    '<div class="stat">' + signed(recentChange) + '</div>' +
+    '</div>';
+
+  details.innerHTML =
+    '<div class="card"><h3>Alle Messwerte</h3>' +
+    points.slice().reverse().map(p =>
+      '<div class="entry row">' +
+      '<span class="muted">' +
+      clean(dateLabel(p.date)) + '</span>' +
+      '<b>' + Number(p.value.toFixed(2)) +
+      ' kg</b></div>'
+    ).join('') +
+    '</div>';
+
+  drawLineChart(points);
+}
+
+function drawLineChart(points) {
+  const canvas = document.getElementById("progressChart");
+  const ctx = canvas.getContext("2d");
+
+  const width = canvas.width;
+  const height = canvas.height;
+
+  ctx.clearRect(0, 0, width, height);
+
+  const left = 38;
+  const right = 15;
+  const top = 20;
+  const bottom = 35;
+
+  const chartWidth = width - left - right;
+  const chartHeight = height - top - bottom;
+
+  const values = points.map(p => p.value);
+  const maximum = Math.max(1, ...values);
+  const minimum = Math.min(0, ...values);
+  const range = Math.max(1, maximum - minimum);
+
+  ctx.font = "11px Arial";
+  ctx.fillStyle = "#a9b9aa";
+  ctx.strokeStyle = "#304034";
+  ctx.lineWidth = 1;
+
+  for (let i = 0; i <= 4; i++) {
+    const y = top + chartHeight * i / 4;
+    const value = maximum - range * i / 4;
+
+    ctx.beginPath();
+    ctx.moveTo(left, y);
+    ctx.lineTo(width - right, y);
+    ctx.stroke();
+
+    ctx.fillText(
+      String(Math.round(value)),
+      2,
+      y + 4
+    );
+  }
+
+  if (!points.length) return;
+
+  const coords = points.map((point, i) => {
+    const x = points.length === 1
+      ? left + chartWidth / 2
+      : left + i * chartWidth / (points.length - 1);
+
+    const y = top + chartHeight -
+      ((point.value - minimum) / range) * chartHeight;
+
+    return { x, y };
+  });
+
+  ctx.strokeStyle = "#b9ff58";
+  ctx.lineWidth = 3;
+  ctx.lineJoin = "round";
+
+  ctx.beginPath();
+
+  coords.forEach((p, i) => {
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  });
+
+  ctx.stroke();
+
+  coords.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = "#b9ff58";
+    ctx.fill();
+  });
+
+  ctx.fillStyle = "#a9b9aa";
+  ctx.font = "11px Arial";
+
+  ctx.fillText("Erstes", left, height - 9);
+  ctx.fillText("Letztes", width - 55, height - 9);
+}
+
+function exportBackup() {
+  const backup = {
+    version: 5,
+    plans: plans,
+    workouts: workouts
+  };
+
+  const file = new Blob(
+    [JSON.stringify(backup, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "gymbook-backup.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function() {
+    try {
+      const backup = JSON.parse(reader.result);
+
+      let importedPlans;
+      let importedWorkouts;
+
+      if (Array.isArray(backup)) {
+        importedPlans = [];
+        importedWorkouts = backup;
+      } else {
+        importedPlans = backup.plans;
+        importedWorkouts = backup.workouts;
+      }
+
+      if (
+        !Array.isArray(importedPlans) ||
+        !Array.isArray(importedWorkouts)
+      ) {
+        throw new Error("Ungültiges Backup");
+      }
+
+      if (!confirm(
+        "Vorhandene Trainingspläne und Trainingsdaten " +
+        "durch dieses Backup ersetzen?"
+      )) {
+        return;
+      }
+
+      localStorage.setItem(
+        PLAN_STORAGE,
+        JSON.stringify(importedPlans)
+      );
+
+      localStorage.setItem(
+        STORAGE,
+        JSON.stringify(importedWorkouts)
+      );
+
+      plans = importedPlans;
+      workouts = importedWorkouts;
+      current = [];
+      activePlanId = null;
+
+      renderPlans();
+      showTab("plans");
+
+      alert("Backup erfolgreich wiederhergestellt!");
+    } catch (error) {
+      alert("Die Backup-Datei konnte nicht gelesen werden.");
+    }
+
+    event.target.value = "";
+  };
+
+  reader.readAsText(file);
+}
+
+function resetData() {
+  if (!confirm(
+    "Wirklich alle Trainingspläne und Ergebnisse löschen?"
+  )) {
+    return;
+  }
+
+  if (!confirm(
+    "Letzte Bestätigung: Alle Daten endgültig löschen?"
+  )) {
+    return;
+  }
+
+  try {
+    localStorage.removeItem(STORAGE);
+    localStorage.removeItem(PLAN_STORAGE);
+
+    workouts = [];
+    plans = [];
+    current = [];
+    activePlanId = null;
+
+    renderPlans();
+    showTab("plans");
+
+    alert("Alle Trainingsdaten wurden gelöscht.");
+  } catch (error) {
+    alert("Die Daten konnten nicht gelöscht werden.");
+  }
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js")
+      .catch(error => console.log(error));
+  });
+}
+
+renderPlans();
+
+</script>
+</body>
+</html>
